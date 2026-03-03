@@ -1,0 +1,10 @@
+<manifest xmlns:android="http://schemas.android.com/apk/res/android"
+  package="dev.binarybush.tawk">
+    <!-- Network permission required to load remote tawk embed on mobile.
+         Hosts embedding this plugin should also declare this permission in
+         their application manifest. -->
+    <uses-permission android:name="android.permission.INTERNET" />
+    <application
+        android:enableOnBackInvokedCallback="true">
+    </application>
+</manifest>
