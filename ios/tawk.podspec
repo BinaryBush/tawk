@@ -9,7 +9,7 @@ Pod::Spec.new do |s|
   s.description      = <<-DESC
 A small Flutter plugin that embeds the tawk.to chat widget. Works on web (DOM injection) and on mobile/desktop using a WebView.
                        DESC
-  s.homepage         = 'https://github.com/csertant/tawk'
+  s.homepage         = 'https://github.com/BinaryBush/tawk'
   s.license          = { :type => 'GPL-3.0', :file => '../LICENSE' }
   s.author           = { 'Tamas Csertan' => 'tamas@binarybush.dev', 'Mark Sarvari' => 'mark@binarybush.dev' }
   s.source           = { :path => '.' }

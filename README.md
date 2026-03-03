@@ -2,7 +2,7 @@
 
 [![pub package](https://img.shields.io/pub/v/tawk.svg)](https://pub.dev/packages/tawk)
 [![License](https://img.shields.io/badge/license-GPL--3.0-blue.svg)](LICENSE)
-[![CI](https://github.com/csertant/tawk/actions/workflows/test.yaml/badge.svg)](https://github.com/csertant/tawk/actions)
+[![CI](https://github.com/BinaryBush/tawk/actions/workflows/test.yaml/badge.svg)](https://github.com/BinaryBush/tawk/actions)
 
 A small Flutter plugin that embeds the tawk.to chat widget. Works on web (DOM injection) and on mobile/desktop using a WebView.
 
