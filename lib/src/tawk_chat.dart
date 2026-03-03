@@ -2,10 +2,11 @@ import 'dart:async';
 
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
-import 'package:webview_flutter/webview_flutter.dart' as wv;
 
-import 'tawk_chat_common.dart';
 import 'tawk_chat_stub.dart' if (dart.library.html) 'tawk_chat_web.dart';
+import 'tawk_fullscreen_page_stub.dart'
+    if (dart.library.html) 'tawk_fullscreen_page_web.dart'
+    if (dart.library.io) 'tawk_fullscreen_page_mobile.dart';
 
 /// Controls chat UI: floating widget on web, WebView on mobile.
 class TawkController {
@@ -32,7 +33,7 @@ class TawkController {
     _isOpen = true;
     await Navigator.of(context).push(
       MaterialPageRoute<void>(
-        builder: (final _) => _TawkFullScreenPage(chatUrl: chatUrl),
+        builder: (final _) => buildTawkFullScreenPage(chatUrl: chatUrl),
       ),
     );
     _isOpen = false;
@@ -152,91 +153,5 @@ class _TawkChatState extends State<TawkChat> {
     }
 
     return webHelper;
-  }
-}
-
-/// Full-screen page used on mobile to show the tawk embed inside a WebView.
-class _TawkFullScreenPage extends StatefulWidget {
-  const _TawkFullScreenPage({required this.chatUrl});
-
-  final String chatUrl;
-
-  @override
-  State<_TawkFullScreenPage> createState() => _TawkFullScreenPageState();
-}
-
-class _TawkFullScreenPageState extends State<_TawkFullScreenPage> {
-  late final wv.WebViewController _controller;
-
-  @override
-  void initState() {
-    super.initState();
-    _controller = wv.WebViewController();
-    unawaited(_controller.setJavaScriptMode(wv.JavaScriptMode.unrestricted));
-    unawaited(_controller.setBackgroundColor(const Color(0x00000000)));
-
-    // Some embed scripts perform UA sniffing or require a non-empty user
-    // agent to run certain features. The plugin sets a conservative, modern
-    // UA string to improve compatibility with tawk's embed scripts.
-    try {
-      unawaited(
-        _controller.setUserAgent(
-          'Mozilla/5.0 (Linux; Android 10; Mobile) AppleWebKit/537.36 (KHTML, like Gecko) '
-          'Chrome/116.0.0.0 Mobile Safari/537.36',
-        ),
-      );
-    } on Exception catch (_) {
-      // setUserAgent may not be available on some platforms/versions; ignore.
-    }
-    // Set up navigation delegate for handling page lifecycle events
-    unawaited(
-      _controller.setNavigationDelegate(
-        wv.NavigationDelegate(
-          onProgress: (final progress) {
-            /* Progress: $progress */
-          },
-          onPageStarted: (final url) {
-            /* Page started: $url */
-          },
-          onPageFinished: (final url) {
-            /* Page finished: $url */
-          },
-          onWebResourceError: (final error) {
-            /* Resource error: ${error.description} */
-          },
-        ),
-      ),
-    );
-
-    unawaited(_loadTawkHtml());
-  }
-
-  Future<void> _loadTawkHtml() async {
-    try {
-      final pageUrl = Uri.parse(widget.chatUrl);
-      await _controller.loadRequest(pageUrl);
-      return;
-    } on Exception catch (_) {
-      try {
-        final html = buildTawkEmbedHtml(widget.chatUrl);
-        await _controller.loadHtmlString(html);
-      } catch (e) {
-        rethrow;
-      }
-    }
-  }
-
-  @override
-  Widget build(final BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        title: const Text('Tawk Chat'),
-        leading: IconButton(
-          icon: const Icon(Icons.close),
-          onPressed: () => TawkController.of(context).close(context),
-        ),
-      ),
-      body: wv.WebViewWidget(controller: _controller),
-    );
   }
 }
